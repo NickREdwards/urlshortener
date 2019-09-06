@@ -1,0 +1,20 @@
+version: "3.4"
+
+services: 
+  api:
+    image: api:latest
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+    - "8080:80"
+  db:
+    image: db:latest
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    ports:
+    - "8081:5432"
+    environment:
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: urlshortener

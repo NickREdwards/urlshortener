@@ -1,0 +1,15 @@
+{
+    "sqltools.connections": [
+        {
+            "askForPassword": false,
+            "connectionTimeout": 30,
+            "database": "urlshortener",
+            "dialect": "PostgreSQL",
+            "name": "Local Postgres",
+            "password": "docker",
+            "port": 8081,
+            "server": "127.0.0.1",
+            "username": "postgres"
+        }
+    ]
+}

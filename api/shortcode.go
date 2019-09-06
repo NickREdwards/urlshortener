@@ -1,0 +1,30 @@
+package main
+
+import (
+	"fmt"
+	"math/rand"
+)
+
+// NewShortCode - generates a unique 6 character string
+func NewShortCode() string {
+	// 62 possible characters, 6 characters long = 6^62 permutations = 1.7594524e+48 permutations
+	possibleCharacters := []string{
+		"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+		"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+		"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+		"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
+
+	totalCharacters := len(possibleCharacters)
+
+	shortCode := fmt.Sprintf(
+		"%v%v%v%v%v%v",
+		possibleCharacters[rand.Intn(rand.Intn(totalCharacters))],
+		possibleCharacters[rand.Intn(rand.Intn(totalCharacters))],
+		possibleCharacters[rand.Intn(rand.Intn(totalCharacters))],
+		possibleCharacters[rand.Intn(rand.Intn(totalCharacters))],
+		possibleCharacters[rand.Intn(rand.Intn(totalCharacters))],
+		possibleCharacters[rand.Intn(rand.Intn(totalCharacters))])
+
+	return shortCode
+}
