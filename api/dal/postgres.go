@@ -1,22 +1,13 @@
-package main
+package dal
 
 import (
 	"database/sql"
 	"errors"
 	"fmt"
 
+	//
 	_ "github.com/lib/pq"
 )
-
-// ShortenedURLAdder ...
-type ShortenedURLAdder interface {
-	Add(su ShortenedURL) error
-}
-
-// ShortenedURLGetter ...
-type ShortenedURLGetter interface {
-	Get(shortCode string) (ShortenedURL, error)
-}
 
 const (
 	host     = "db"
@@ -45,7 +36,7 @@ func (pdb PostgresDB) Add(su ShortenedURL) error {
 	}
 	defer stmt.Close()
 
-	res, err := stmt.Exec(su.shortCode, su.longURL)
+	res, err := stmt.Exec(su.ShortCode, su.LongURL)
 	if err != nil {
 		panic(err)
 	}

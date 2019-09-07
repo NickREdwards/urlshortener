@@ -13,8 +13,6 @@ services:
     build:
       context: ./db
       dockerfile: Dockerfile
-    ports:
-    - "8081:5432"
     environment:
       POSTGRES_PASSWORD: docker
       POSTGRES_DB: urlshortener

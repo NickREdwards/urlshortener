@@ -7,13 +7,18 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/NickREdwards/urlshortener/api/dal"
 	"github.com/gorilla/mux"
+)
+
+const (
+	shortCodeLength = 6
 )
 
 // Service - manages all routes and calls to the accounts resource
 type Service struct {
-	urlAdder  ShortenedURLAdder
-	urlGetter ShortenedURLGetter
+	urlAdder  dal.ShortenedURLAdder
+	urlGetter dal.ShortenedURLGetter
 }
 
 type apiError struct {
@@ -21,7 +26,7 @@ type apiError struct {
 }
 
 // Initialise - initialises list and creates default data
-func (s *Service) Initialise(router *mux.Router, urlAdder ShortenedURLAdder, urlGetter ShortenedURLGetter) {
+func (s *Service) Initialise(router *mux.Router, urlAdder dal.ShortenedURLAdder, urlGetter dal.ShortenedURLGetter) {
 	s.registerRoutes(router)
 	s.urlAdder = urlAdder
 	s.urlGetter = urlGetter
@@ -29,19 +34,32 @@ func (s *Service) Initialise(router *mux.Router, urlAdder ShortenedURLAdder, url
 
 func (s *Service) registerRoutes(router *mux.Router) {
 	router.HandleFunc("/api/create", s.createShortenedURL).Methods("POST")
-	router.HandleFunc("/api/health", func(w http.ResponseWriter, req *http.Request) { io.WriteString(w, "healthy") })
+
+	router.HandleFunc(fmt.Sprintf("/r/{shortCode:(?:[A-Za-z0-9]{%v})}", shortCodeLength), s.resolveShortenedURL).Methods("GET")
+	router.HandleFunc("/health", func(w http.ResponseWriter, req *http.Request) { io.WriteString(w, "healthy") }).Methods("GET")
 }
 
 func (s *Service) createShortenedURL(w http.ResponseWriter, r *http.Request) {
 	var urlRequest ShortenURLRequest
 	_ = json.NewDecoder(r.Body).Decode(&urlRequest)
-	shortCode := NewShortCode()
-	shortenedURL := ShortenedURL{shortCode, urlRequest.URLToShorten}
+	shortCode := NewShortCode(shortCodeLength)
+	shortenedURL := dal.ShortenedURL{ShortCode: shortCode, LongURL: urlRequest.URLToShorten}
 	err := s.urlAdder.Add(shortenedURL)
 	if err != nil {
 		returnError(w, errors.New("Error creating new shortened URL"))
 	} else {
 		returnJSON(w, shortenedURL)
+	}
+}
+
+func (s *Service) resolveShortenedURL(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	shortCode := vars["shortCode"]
+	su, err := s.urlGetter.Get(shortCode)
+	if err != nil {
+		returnError(w, errors.New("Error resolving shortend URL"))
+	} else {
+		http.Redirect(w, r, su.LongURL, 301)
 	}
 }
 

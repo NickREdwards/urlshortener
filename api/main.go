@@ -1,7 +1,10 @@
 package main
 
+import "github.com/NickREdwards/urlshortener/api/dal"
+
 func main() {
 	var app App
-	app.Initialise()
+	var db dal.PostgresDB
+	app.Initialise(&db, &db)
 	app.Run()
 }
