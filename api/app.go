@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/NickREdwards/urlshortener/api/dal"
 	"github.com/gorilla/mux"
 )
 
@@ -15,7 +14,7 @@ type App struct {
 }
 
 // Initialise ...
-func (app *App) Initialise(urlAdder dal.ShortenedURLAdder, urlGetter dal.ShortenedURLGetter) {
+func (app *App) Initialise(urlAdder ShortenedURLAdder, urlGetter ShortenedURLGetter) {
 	app.router = mux.NewRouter()
 	app.service = &Service{}
 	app.service.Initialise(app.router, urlAdder, urlGetter)

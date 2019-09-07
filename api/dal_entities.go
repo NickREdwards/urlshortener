@@ -1,4 +1,4 @@
-package dal
+package main
 
 // ShortenedURL ...
 type ShortenedURL struct {

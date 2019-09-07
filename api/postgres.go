@@ -1,4 +1,4 @@
-package dal
+package main
 
 import (
 	"database/sql"
@@ -48,6 +48,24 @@ func (pdb PostgresDB) Add(su ShortenedURL) error {
 }
 
 // Get ...
-func (pdb PostgresDB) Get(shortCode string) (ShortenedURL, error) {
-	return ShortenedURL{}, nil
+func (pdb PostgresDB) Get(shortCode string) (*ShortenedURL, error) {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	shortenedURL := ShortenedURL{}
+
+	row := db.QueryRow("SELECT short_code, long_url FROM shortened_urls WHERE short_code = $1;", shortCode)
+	err = row.Scan(&shortenedURL.ShortCode, &shortenedURL.LongURL)
+	switch err {
+	case sql.ErrNoRows:
+		return nil, errors.New("Invalid short code supplied")
+	case nil:
+		return &shortenedURL, nil
+	default:
+		panic(err)
+	}
 }

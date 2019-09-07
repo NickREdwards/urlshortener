@@ -1,4 +1,4 @@
-package dal
+package main
 
 import "github.com/stretchr/testify/mock"
 
@@ -12,6 +12,7 @@ func (m *DalMock) Add(su ShortenedURL) error {
 	return nil
 }
 
-func (m *DalMock) Get(shortCode string) (ShortenedURL, error) {
-	return m.ShortenedUrls[shortCode], nil
+func (m *DalMock) Get(shortCode string) (*ShortenedURL, error) {
+	su := m.ShortenedUrls[shortCode]
+	return &su, nil
 }

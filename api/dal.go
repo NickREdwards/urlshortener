@@ -1,4 +1,4 @@
-package dal
+package main
 
 // ShortenedURLAdder ...
 type ShortenedURLAdder interface {
@@ -7,5 +7,5 @@ type ShortenedURLAdder interface {
 
 // ShortenedURLGetter ...
 type ShortenedURLGetter interface {
-	Get(shortCode string) (ShortenedURL, error)
+	Get(shortCode string) (*ShortenedURL, error)
 }
