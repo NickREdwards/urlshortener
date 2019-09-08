@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"testing"
 	"time"
 
@@ -9,26 +10,39 @@ import (
 )
 
 var pdb PostgresDB
+var runTests = true
 
 // Postgres must be running at localhost:5432 to run these tests
-func setupPostgresTests() {
+// If it isn't, return error and set runTests to false to avoid having to reevaluate
+func setupPostgresTests() error {
+	if !runTests {
+		return errors.New("Skipping tests, Postgres should be running for these tests")
+	}
+
 	config := PostgresDBConfig{host: "localhost", port: 5432, user: "postgres", password: "docker", dbname: "urlshortener"}
 	pdb = PostgresDB{config: config}
 
 	db, err := sql.Open("postgres", pdb.getConnectionString())
 	if err != nil {
-		panic(err)
+		runTests = false
+		return err
 	}
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		panic(err)
+		runTests = false
+		return err
 	}
+
+	return nil
 }
 
 func TestGetAccessLogsAllTime(t *testing.T) {
 	// Arrange
-	setupPostgresTests()
+	err := setupPostgresTests()
+	if err != nil {
+		t.Skip()
+	}
 
 	currentTime, err := time.Parse("2006-01-02 15:04:05", "2019-09-08 17:00:00")
 	if err != nil {
@@ -53,7 +67,10 @@ func TestGetAccessLogsAllTime(t *testing.T) {
 
 func TestGetAccessLogsPastWeek(t *testing.T) {
 	// Arrange
-	setupPostgresTests()
+	err := setupPostgresTests()
+	if err != nil {
+		t.Skip()
+	}
 
 	currentTime, err := time.Parse("2006-01-02 15:04:05", "2019-09-08 17:00:00")
 	if err != nil {
@@ -79,7 +96,10 @@ func TestGetAccessLogsPastWeek(t *testing.T) {
 
 func TestGetAccessLogsTwentyFourHours(t *testing.T) {
 	// Arrange
-	setupPostgresTests()
+	err := setupPostgresTests()
+	if err != nil {
+		t.Skip()
+	}
 
 	currentTime, err := time.Parse("2006-01-02 15:04:05", "2019-09-08 17:00:00")
 	if err != nil {
@@ -102,11 +122,14 @@ func TestGetAccessLogsTwentyFourHours(t *testing.T) {
 
 func TestLogAccess(t *testing.T) {
 	// Arrange
-	setupPostgresTests()
+	err := setupPostgresTests()
+	if err != nil {
+		t.Skip()
+	}
 	initialCount := getAccessLogCount(3)
 
 	// Act
-	err := pdb.LogAccess("EIFdf")
+	err = pdb.LogAccess("EIFdf")
 
 	// Assert
 	if err != nil {
