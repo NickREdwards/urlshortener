@@ -17,7 +17,7 @@ A simple URL shortener API written in Golang with a Postgres database.
 To get a local copy up and running follow the below steps.
 
 ### Prerequisites
-* Docker
+* Docker (engine v17.09.0+)
 
 ### Build & Run
 ```
