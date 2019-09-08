@@ -71,7 +71,7 @@ curl -H "Content-Type: application/json" -d '{"urlToShorten": "http://www.google
 curl http://localhost:8080/api/access_logs/ABCDE
 curl http://localhost:8080/api/access_logs/ABCDE?from=2019-09-07+17:00:00
 curl http://localhost:8080/api/access_logs/ABCDE?to=2019-09-07+17:30:00
-curl http://localhost:8080/api/access_logs/ABCDE?from=2019-09-07+17:00:00.000&to=2019-09-07T17:30:00
+curl http://localhost:8080/api/access_logs/ABCDE?from=2019-09-07+17:00:00.000&to=2019-09-07+17:30:00
 ```
 
 ## Design Decisions
