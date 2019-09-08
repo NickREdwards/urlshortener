@@ -21,6 +21,7 @@ To get a local copy up and running follow the below steps.
 
 ### Build & Run
 ```
+git clone https://github.com/NickREdwards/urlshortener.git
 cd urlshortener
 docker-compose up
 ```
@@ -74,6 +75,14 @@ curl http://localhost:8080/api/access_logs/ABCDE?to=2019-09-07+17:30:00
 curl http://localhost:8080/api/access_logs/ABCDE?from=2019-09-07+17:00:00.000&to=2019-09-07+17:30:00
 ```
 
+## Assumptions
+* No requirement to store the date/time of the shortened URLs as they are intended to be permanent
+* No requirement to query access logs across all shortened URLs
+* No requirement to return a previously shortened URL, only to redirect to the long URL that the code represents
+    * Assumption that redirection logic forms part of the same service as creation/shortening
+* No requirement for TLS at this stage
+* No requirement to protect against attempts to flood the system
+
 ## Design Decisions
 * Docker
     * Cross platform and easy to build/run/test all components of the service
@@ -92,6 +101,10 @@ curl http://localhost:8080/api/access_logs/ABCDE?from=2019-09-07+17:00:00.000&to
     * Saves on space
     * Easier to index
     * Allows for a potential change of host in the future
+* Shortened URL resolution endpoint is separated from the API (/r/)
+    * Shorter URL
+    * Separation of concerns
+    * Easier to capture and route the traffic; may help with monitoring in the future
 * Access to a shortened URL is logged in-process
     * While this may degrade performance of URL resolution, it is necessary without having a messaging system in place for guaranteed delivery/eventual consistency
     * Access logs are not indexed as I am prioritizing write performance over read performance
