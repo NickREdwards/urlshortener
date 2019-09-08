@@ -5,6 +5,7 @@
   * [Prerequisites](#prerequisites)
   * [Build & Run](#build--run)
 * [API](#api)
+* [Assumptions](#assumptions)
 * [Design Decisions](#design-decisions)
 * [Potential Improvements](#potential-improvements)
 * [License](#license)
